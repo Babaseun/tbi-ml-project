@@ -15,7 +15,7 @@ RUN pipenv install --system --deploy --ignore-pipfile
 
 # Copy your app source code excluding tests
 COPY server.py ./
-COPY your_flask_module ./your_flask_module
+COPY serving ./serving
 
 # Expose port (adjust if your app uses a different port)
 EXPOSE 5000
