@@ -1,6 +1,6 @@
 # TBI Technical Test Project
 
-Built using flask, prometheus for metics collection, Docker containerization
+Built using flask, prometheus for metics collection, Docker containerization, Security Scanning, pushing, images to AWS ECR
 
 ## Requirements
 
