@@ -31,6 +31,7 @@ A lightweight Flask-based machine learning service with Prometheus metrics, cont
 ```bash
 git clone https://github.com/Babaseun/tbi-ml-project
 cd tbi-ml-project
+```
 
 2. Build and start the API:
 
