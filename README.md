@@ -1,18 +1,36 @@
 # TBI Technical Test Project
 
-Built using flask, prometheus for metics collection, Docker containerization, Security Scanning, pushing, images to AWS ECR
+A lightweight Flask-based machine learning service with Prometheus metrics, containerization, security scanning, and AWS ECR integration.
 
-## Requirements
+---
+
+## 🔧 Tech Stack
+
+- **Flask** – Python web framework for API development  
+- **Prometheus** – Metrics collection and monitoring  
+- **Docker** – Containerization of the app  
+- **AWS ECR** – Hosting and deployment of Docker images  
+- **Pytest** – Unit testing framework  
+- **Pipenv** – Python dependency management
+
+---
+
+## 📋 Requirements
 
 - [Python 3.13+](https://www.python.org/downloads/)
+- [Pipenv](https://pipenv.pypa.io/en/latest/)
+- [Docker](https://www.docker.com/)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) (for ECR login & push)
 
-## Setup
+---
 
-1. Clone the repository:
+## 🚀 Getting Started
 
-   ```
-   git clone https://github.com/Babaseun/tbi-ml-project
-   ```
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Babaseun/tbi-ml-project
+cd tbi-ml-project
 
 2. Build and start the API:
 
