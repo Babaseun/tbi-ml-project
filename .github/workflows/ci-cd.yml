@@ -41,7 +41,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t ${{ vars.DOCKER_IMAGE_NAME }}:${{ vars.DOCKER_IMAGE_TAG }} .
 
-      # AWS Setup
+      # AWS Setup (Using Hardcoded Credentials)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -49,21 +49,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      # ECR Repository Setup
       - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        run: |
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | \
+          docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com > /dev/null 2>&1
 
       # ECR Deployment
       - name: Tag and push to ECR
         run: |
-          docker tag ${{ vars.DOCKER_IMAGE_NAME }}:${{ vars.DOCKER_IMAGE_TAG }} ${{ secrets.ECR_IMAGE_URI }}
-          docker push ${{ secrets.ECR_IMAGE_URI }}
+          docker tag ${{ vars.DOCKER_IMAGE_NAME }}:${{ vars.DOCKER_IMAGE_TAG }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY_NAME }}:${{ vars.DOCKER_IMAGE_TAG }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY_NAME }}:${{ vars.DOCKER_IMAGE_TAG }}
 
       # Security Scanning
       - name: Scan with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ vars.ECR_IMAGE_URI }}
+          image-ref: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY_NAME }}:${{ vars.DOCKER_IMAGE_TAG }}
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
@@ -78,8 +80,8 @@ jobs:
       # Verification
       - name: Verify ECR deployment
         run: |
-          echo "Successfully deployed to: ${{ vars.ECR_IMAGE_URI }}"
+          echo "Successfully deployed to ECR"
           aws ecr describe-images \
             --repository-name ${{ vars.ECR_REPOSITORY_NAME }} \
             --image-ids imageTag=${{ vars.DOCKER_IMAGE_TAG }} \
-            --region ${{ vars.AWS_REGION }}
+            --region ${{ vars.AWS_REGION }} > /dev/null 2>&1
